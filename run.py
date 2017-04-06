@@ -1,6 +1,7 @@
 import os
 
-from library._01_root.py import app
+from library._01_root import app
+
 
 if __name__ == '__main__':
     app.debug = True

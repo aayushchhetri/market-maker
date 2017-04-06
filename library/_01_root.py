@@ -5,5 +5,5 @@ app = Flask(__name__)
 
 
 @app.route('/')
-def main():
+def root():
     return "Starting from scratch"
