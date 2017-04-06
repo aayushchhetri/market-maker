@@ -1,5 +1,6 @@
 ---
 applications:
  - name: market-maker
-   random-route: true
    memory: 128M
+   routes:
+   - route: market-maker.frankencloud.net
