@@ -17,14 +17,13 @@ client = conn.fetch_client()
 db = conn.fetch_db()
 app = Flask(__name__)
 app.template_folder = 'library/templates'
+app.static_folder = 'library/static'
 
 # Render Pages #
-
-
 @app.route('/')
 def root_page():
-        page = Root()
-        return page.fetch()
+    page = Root()
+    return page.fetch()
 
 
 @app.route('/marketState', methods=['GET'])
