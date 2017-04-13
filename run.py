@@ -1,44 +1,22 @@
 import os
-import json
 import atexit
 import cf_deployment_tracker
-from library._marketState import State
-from cloudant import Cloudant
 from flask import Flask, jsonify, render_template
+
+from library._marketState import State
+from library._Cloudant import MarketDB
+
 
 # Emit Bluemix deployment event #
 cf_deployment_tracker.track()
 
-# Connect to  Cloudant DB and create database if not already present #
-
-db_name = 'market-maker'
-client = None
-db = None
-
-if 'VCAP_SERVICES' in os.environ:
-    vcap = json.loads(os.getenv('VCAP_SERVICES'))
-    print('Found VCAP_SERVICES')
-    if 'cloudantNoSQLDB' in vcap:
-        creds = vcap['cloudantNoSQLDB'][0]['credentials']
-        user = creds['username']
-        password = creds['password']
-        url = 'https://' + creds['host']
-        client = Cloudant(user, password, url=url, connect=True)
-        db = client.create_database(db_name, throw_on_exists=False)
-elif os.path.isfile('vcap-local.json'):
-    with open('vcap-local.json') as f:
-        vcap = json.load(f)
-        print('Found local VCAP_SERVICES')
-        creds = vcap['services']['cloudantNoSQLDB'][0]['credentials']
-        user = creds['username']
-        password = creds['password']
-        url = 'https://' + creds['host']
-        client = Cloudant(user, password, url=url, connect=True)
-        db = client.create_database(db_name, throw_on_exists=False)
+# Setup objects #
+conn = MarketDB()
+client = conn.fetch_client()
+db = conn.fetch_db()
+app = Flask(__name__)
 
 # Render Pages #
-
-app = Flask(__name__)
 
 
 @app.route('/')
@@ -76,4 +54,4 @@ if __name__ == '__main__':
 
 @atexit.register
 def shutdown():
-    client.disconnect()
+    conn.client.disconnect()
