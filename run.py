@@ -1,9 +1,10 @@
 import os
 import atexit
 import cf_deployment_tracker
-from flask import Flask, jsonify, render_template
+from flask import Flask
 
 from library._marketState import State
+from library._RootPage import Root
 from library._Cloudant import MarketDB
 
 
@@ -15,20 +16,22 @@ conn = MarketDB()
 client = conn.fetch_client()
 db = conn.fetch_db()
 app = Flask(__name__)
+app.template_folder = 'library/templates'
 
 # Render Pages #
 
 
 @app.route('/')
 def root_page():
-    return "Starting from scratch"
+        page = Root()
+        return page.fetch()
 
 
 @app.route('/marketState', methods=['GET'])
 def market_state_page():
     if client:
-        new_state = State(db)
-        return new_state.fetch()
+        page = State(db)
+        return page.fetch()
     else:
         print('No database')
         return "Empty data set"
