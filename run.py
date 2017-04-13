@@ -53,7 +53,7 @@ def market_state_page():
         return new_state.fetch()
     else:
         print('No database')
-        return jsonify([])
+        return "Empty data set"
 
 
 @app.route('/news')
