@@ -5,6 +5,7 @@ from flask import Flask
 
 from library._marketState import State
 from library._marketHistory import History
+from library._news import News
 from library._RootPage import Root
 from library._Cloudant import MarketDB
 
@@ -40,7 +41,12 @@ def market_state_page():
 
 @app.route('/news')
 def news_page():
-    return "List of news"
+    if client:
+        page = News(db)
+        return page.fetch()
+    else:
+        print('No database')
+        return "Empty data set"
 
 
 @app.route('/marketHistory')
@@ -51,6 +57,11 @@ def market_history_page():
     else:
         print('No database')
         return "Empty data set"
+
+
+@app.route('/wageWar')
+def war_page():
+    return "Wage War"
 
 # Provide TCP Host#
 
