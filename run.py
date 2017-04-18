@@ -4,6 +4,7 @@ import cf_deployment_tracker
 from flask import Flask
 
 from library._marketState import State
+from library._marketHistory import History
 from library._RootPage import Root
 from library._Cloudant import MarketDB
 
@@ -18,6 +19,7 @@ db = conn.fetch_db()
 app = Flask(__name__)
 app.template_folder = 'library/templates'
 app.static_folder = 'library/static'
+
 
 # Render Pages #
 @app.route('/')
@@ -42,8 +44,13 @@ def news_page():
 
 
 @app.route('/marketHistory')
-def market_page():
-    return "Market History"
+def market_history_page():
+    if client:
+        page = History(db)
+        return page.fetch()
+    else:
+        print('No database')
+        return "Empty data set"
 
 # Provide TCP Host#
 
